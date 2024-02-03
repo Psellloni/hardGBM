@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 #include <fstream>
 
 class Metrics {
@@ -70,12 +71,13 @@ public:
 
 int main() 
 {
-	Metrics mt;
-	Solars sl;
+	std::ifstream myfile;
+    	myfile.open("data1.txt");
+	std::string line;
 
-	std::vector<std::vector<double>> df = sl.read_txt("data1.txt");
-
-	std::cout << mt.mse(df[0], df[1]);
-
+	while(std::getline(myfile, line)) {
+		std::cout << line << std::endl;
+	}
+	
 	return 0;
 }
