@@ -1,9 +1,11 @@
-#include<iostream>
-#include<vector>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
 
 class Metrics {
 public:
-	double mse(std::vector<int> a, std::vector<int> b) {
+	double mse(std::vector<double> a, std::vector<double> b) {
 
 		if (a.size() != b.size()) {
 			return -1;
@@ -21,7 +23,7 @@ public:
 
 		}
 
-	double mae(std::vector<int> a, std::vector<int> b) {
+	double mae(std::vector<double> a, std::vector<double> b) {
 
 		if (a.size() != b.size()) {
 			return -1;
@@ -40,17 +42,40 @@ public:
 		}
 };
 
+class Solars {
+public:
+	std::vector<std::vector<double>> read_txt (std::string path) {
+		std::vector<double> d1 = {};
+		std::vector<double> d2 = {};
+		
+		std::ifstream myfile;
+    		myfile.open("data1.txt");
+	
+		float a, b;
+		while (myfile >> a >> b) {
+    			d1.push_back(a);
+			d2.push_back(b);
+		}
+
+		std::vector<std::vector<double>> result = {};
+		
+		result.push_back(d1);
+		result.push_back(d2);
+
+		return result;
+
+	}
+};
+
+
 int main() 
 {
-	std::vector<int> v1 = {1, 1, 1, 1, 1};
-	std::vector<int> v2 = {1, 2, 1, 1, 1};
+	Metrics mt;
+	Solars sl;
 
-	Metrics metric;
+	std::vector<std::vector<double>> df = sl.read_txt("data1.txt");
 
-	double res = metric.mae(v1, v2);
+	std::cout << mt.mse(df[0], df[1]);
 
-	std::cout << res;
-	
-	
 	return 0;
 }
