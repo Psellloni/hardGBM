@@ -46,21 +46,32 @@ public:
 
 class Solars {
 public:
-	std::vector<std::vector<int>> read_csv (std::string path) {
-		std::vector<std::vector<int>> result(3);
+	std::vector<std::vector<double>> read_csv (std::string path) {
+		std::vector<std::vector<double>> result(3);
 	
 		std::ifstream myfile;
     		myfile.open(path);
+
+		int size = 0;
 		std::string line;
+
+		while(std::getline(myfile, line)) {
+			size ++;
+		}
+
+		std::cout << size;
+
+		myfile.close();
+		myfile.open(path);
 
 		std::getline(myfile, line);
 		
-		std::vector<int> vec(50000);
+		std::vector<double> vec(50000);
 		result.push_back(vec);
 
 		for (int i = 0; i < line.size(); i++) {
 			if (line[i] == ',') {
-				std::vector<int> vec(50000);
+				std::vector<double> vec(50000);
 				result.push_back(vec);
 			}
 		}
@@ -70,12 +81,12 @@ public:
 			int c = 0;
 			for (int i = 0; i < line.size(); i++) {
 				if (line[i] == ';') {
-					result[c].push_back(std::stoi(line.substr(sp, i - sp)));
+					result[c].push_back(std::stod(line.substr(sp, i - sp)));
 					sp = i + 1;
 					c += 1;
 				}
 			}
-			result[c].push_back(std::stoi(line.substr(sp).c_str()));
+			result[c].push_back(std::stod(line.substr(sp).c_str()));
 		}
 
 		return result;
@@ -87,11 +98,11 @@ public:
 int main() 
 {
 	Solars sl;
+	Metrics mt;
 
 	std::string path = "source/data1.csv";
 
-	std::vector<std::vector<int>> result = sl.read_csv(path);
+	std::vector<std::vector<double>> result = sl.read_csv(path);
 
-	
 	return 0;
 }
