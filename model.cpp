@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <stdlib.h>
 
 class Metrics {
 public:
@@ -45,23 +46,37 @@ public:
 
 class Solars {
 public:
-	std::vector<std::vector<double>> read_txt (std::string path) {
-		std::vector<double> d1 = {};
-		std::vector<double> d2 = {};
-		
-		std::ifstream myfile;
-    		myfile.open("data1.txt");
+	std::vector<std::vector<int>> read_csv (std::string path) {
+		std::vector<std::vector<int>> result(3);
 	
-		float a, b;
-		while (myfile >> a >> b) {
-    			d1.push_back(a);
-			d2.push_back(b);
+		std::ifstream myfile;
+    		myfile.open(path);
+		std::string line;
+
+		std::getline(myfile, line);
+		
+		std::vector<int> vec(50000);
+		result.push_back(vec);
+
+		for (int i = 0; i < line.size(); i++) {
+			if (line[i] == ',') {
+				std::vector<int> vec(50000);
+				result.push_back(vec);
+			}
 		}
 
-		std::vector<std::vector<double>> result = {};
-		
-		result.push_back(d1);
-		result.push_back(d2);
+		while(std::getline(myfile, line)) {
+			int sp = 0;
+			int c = 0;
+			for (int i = 0; i < line.size(); i++) {
+				if (line[i] == ';') {
+					result[c].push_back(std::stoi(line.substr(sp, i - sp)));
+					sp = i + 1;
+					c += 1;
+				}
+			}
+			result[c].push_back(std::stoi(line.substr(sp).c_str()));
+		}
 
 		return result;
 
@@ -71,13 +86,12 @@ public:
 
 int main() 
 {
-	std::ifstream myfile;
-    	myfile.open("data1.txt");
-	std::string line;
+	Solars sl;
 
-	while(std::getline(myfile, line)) {
-		std::cout << line << std::endl;
-	}
+	std::string path = "source/data1.csv";
+
+	std::vector<std::vector<int>> result = sl.read_csv(path);
+
 	
 	return 0;
 }
