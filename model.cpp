@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <stdlib.h>
+#include <cmath>
 
 class Metrics {
 public:
@@ -59,8 +60,6 @@ public:
 			size ++;
 		}
 
-		std::cout << size;
-
 		myfile.close();
 		myfile.open(path);
 
@@ -92,6 +91,31 @@ public:
 		return result;
 
 	}
+	// add covariation and dispersion
+	double corr (std::vector<double> a, std::vector<double> b) {
+		double mean_a = 0;
+		double mean_b = 0;
+
+		for (int i = 0; i < a.size(); i++) {
+			mean_a += a[i];
+			mean_b += b[i];
+		}
+
+		mean_a /= a.size();
+		mean_b /= b.size();
+
+		double a_val = 0;
+		double b_val = 0;
+
+		for (int i = 0; i < a.size(); i++) {
+			a_val += (a[i] - mean_a);
+			b_val += (b[i] - mean_b);
+		}
+
+		double result = (a_val * b_val) / std::sqrt(a_val * a_val * b_val * b_val);
+
+		return result;
+	}
 };
 
 
@@ -103,6 +127,8 @@ int main()
 	std::string path = "source/data1.csv";
 
 	std::vector<std::vector<double>> result = sl.read_csv(path);
+
+	std::cout << sl.corr(result[1], result[2]);
 
 	return 0;
 }
