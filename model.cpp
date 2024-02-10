@@ -181,9 +181,9 @@ int main()
 
 	std::vector<double> y_pred = dtr.predict(result);
 
-	std::cout << std::round(mt.mae(y_pred, y)); */
+	std::cout << std::round(mt.mae(y_pred, y));*/
 
-	std::cout << sl.corr(result[0], result[1]);
+	// std::cout << sl.corr(result[0], result[1]);
 
 
 	return 0;
