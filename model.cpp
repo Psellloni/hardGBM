@@ -91,30 +91,72 @@ public:
 		return result;
 
 	}
-	// add covariation and dispersion
+
+	double mean(std::vector<double> v) {
+    		double sum = 0.0;
+    		for (auto& i : v) {
+        		sum += i;
+    		}
+    		return sum / v.size();
+	}
+
+	double cov (std::vector<double> a, std::vector<double> b) {
+		double sum = 0.0;
+
+    		double mean_a = mean(a);
+    		double mean_b = mean(b);
+
+		if (a.size() != b.size()) {
+        		return 0.0;
+    		}
+
+    		for (int i = 0; i < a.size(); i++) {
+        		sum += (a[i] - mean_a) * (b[i] - mean_b);
+    		}
+
+    		return sum / (a.size() - 1);
+	}
+
+	double variance(std::vector<double> a) {
+    		double mean_a = mean(a);
+    		double sum = 0.0;
+
+    		for (int i = 0; i < a.size(); i++) {
+        		sum += (a[i] - mean_a) * (a[i] - mean_a);
+    		}
+
+    		return sum / (a.size() - 1);
+	}
+
+	double stdDev(std::vector<double> a) {
+    		return sqrt(variance(a));
+	}
+
 	double corr (std::vector<double> a, std::vector<double> b) {
-		double mean_a = 0;
-		double mean_b = 0;
+		double cov_ab = cov(a, b);
+    		double stdDev_a = stdDev(a);
+    		double stdDev_b = stdDev(b);
 
-		for (int i = 0; i < a.size(); i++) {
-			mean_a += a[i];
-			mean_b += b[i];
+		return cov_ab / (stdDev_a * stdDev_b);
+	}
+};
+
+class DecisionTreeRegressor {
+public:
+	double mean;
+	
+	void fit (std::vector<std::vector<double>> x, std::vector<double> y) {
+		for (int i = 0; i < y.size(); i++) {
+			mean += y[i];
 		}
 
-		mean_a /= a.size();
-		mean_b /= b.size();
+		mean /= y.size();
+	}
 
-		double a_val = 0;
-		double b_val = 0;
+	std::vector<double> predict (std::vector<std::vector<double>> x) {
+		std::vector<double> prediction(x[0].size(), mean);
 
-		for (int i = 0; i < a.size(); i++) {
-			a_val += (a[i] - mean_a);
-			b_val += (b[i] - mean_b);
-		}
-
-		double result = (a_val * b_val) / std::sqrt(a_val * a_val * b_val * b_val);
-
-		return result;
+		return prediction;
 	}
 };
 
@@ -123,12 +165,26 @@ int main()
 {
 	Solars sl;
 	Metrics mt;
+	DecisionTreeRegressor dtr;
 
 	std::string path = "source/data1.csv";
 
 	std::vector<std::vector<double>> result = sl.read_csv(path);
 
-	std::cout << sl.corr(result[1], result[2]);
+	/* std::vector<double> y = result[1];
+
+	result.erase(result.begin() + 1);
+
+	double mean = dtr.fit(result, y);
+
+	std::cout << mean;
+
+	std::vector<double> y_pred = dtr.predict(result);
+
+	std::cout << std::round(mt.mae(y_pred, y)); */
+
+	std::cout << sl.corr(result[0], result[1]);
+
 
 	return 0;
 }
